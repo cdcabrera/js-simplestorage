@@ -1,4 +1,4 @@
-<h1>CSS.Responsive Tables</h1>
+<h1>JS.Simple Storage</h1>
 <p>
     Simple JS method to get you going with localStorage without an API.
 </p>

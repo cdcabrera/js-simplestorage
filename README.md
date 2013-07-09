@@ -29,8 +29,7 @@
 
 <h2>License</h2>
 <p>
-    Ignoring a license on this project since I merely pieced together aspects and I'm unsure where the pattern may have
-    originated (feel free to help me update any kudos).
+    My aspect is released under the <a href="http://opensource.org/licenses/mit-license.php">MIT License</a>.
 </p>
 <p>
     I did include a simple API independent "extend" method, feel free to replace with your own. I modified and pieced together my own from several answers on this

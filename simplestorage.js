@@ -15,21 +15,21 @@ window.simplestorage = (function(window, undefined)
 
 
     //-- store and return data
-    function getsetdata( namespace, data )
+    function getsetdata( name, data )
     {
         var current  = new Date().getTime(),
             original = current,
             tempobj  = {};
 
-        if(localStorage[namespace])
+        if(localStorage[name])
         {
-            tempobj = JSON.parse(localStorage[namespace]);
+            tempobj = JSON.parse(localStorage[name]);
         }
 
         if( data != undefined )
         {
             tempobj = extend(tempobj, { set:( tempobj.set || original ), updated:current, data:data });
-            localStorage[namespace] = JSON.stringify(tempobj);
+            localStorage[name] = JSON.stringify(tempobj);
         }
 
         return tempobj;
@@ -40,29 +40,29 @@ window.simplestorage = (function(window, undefined)
     return {
         store : ('localStorage' in window && 'JSON' in window),
 
-        clear : function()
+        clear : function(name)
         {
             if(this.store)
             {
-                if( typeof arguments[0] == 'string' )
+                if( typeof name == 'string' )
                 {
-                    localStorage[arguments[0]] = '{}'; //-- clear specific 
+                    localStorage[name] = '{}'; //-- clear specific
                 }
                 else
                 {
-                    localStorage.clear(); //-- clear all local storage
+                    localStorage.clear(); //-- clear all
                 }
             }
         },
 
-        get : function()
+        get : function(name)
         {
-            return this.set.call(this,arguments[0]);
+            return this.set.call(this,name);
         },
 
-        set : function(name,value)
+        set : function(name,data)
         {
-            return (this.store)? getsetdata.call(this,name,value) : null;
+            return (this.store && typeof name == 'string')? getsetdata.call(this,name,data) : null;
         }
     };
 

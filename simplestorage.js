@@ -15,28 +15,21 @@ window.simplestorage = (function(window, undefined)
 
 
     //-- store and return data
-    function store( namespace, data, clear )
+    function getsetdata( namespace, data )
     {
         var current  = new Date().getTime(),
             original = current,
             tempobj  = {};
 
-        if(clear)
+        if(localStorage[namespace])
         {
-            localStorage[namespace] = '{}';
+            tempobj = JSON.parse(localStorage[namespace]);
         }
-        else
-        {
-            if(localStorage[namespace])
-            {
-                tempobj = JSON.parse(localStorage[namespace]);
-            }
 
-            if( data != undefined )
-            {
-                tempobj = extend(tempobj, { set:( tempobj.set || original ), updated:current, data:data });
-                localStorage[namespace] = JSON.stringify(tempobj);
-            }
+        if( data != undefined )
+        {
+            tempobj = extend(tempobj, { set:( tempobj.set || original ), updated:current, data:data });
+            localStorage[namespace] = JSON.stringify(tempobj);
         }
 
         return tempobj;
@@ -49,13 +42,16 @@ window.simplestorage = (function(window, undefined)
 
         clear : function()
         {
-            if( arguments[0] != undefined )
+            if(this.store)
             {
-                store.call(this,arguments[0],null,true); //-- clear a specific stored item
-            }
-            else if(this.store)
-            {
-                localStorage.clear(); //-- clear all local storage
+                if( typeof arguments[0] == 'string' )
+                {
+                    localStorage[arguments[0]] = '{}'; //-- clear specific 
+                }
+                else
+                {
+                    localStorage.clear(); //-- clear all local storage
+                }
             }
         },
 
@@ -66,7 +62,7 @@ window.simplestorage = (function(window, undefined)
 
         set : function(name,value)
         {
-            return (this.store)? store.call(this,name,value) : null;
+            return (this.store)? getsetdata.call(this,name,value) : null;
         }
     };
 

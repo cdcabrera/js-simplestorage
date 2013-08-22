@@ -53,21 +53,32 @@
                     setarea     = document.getElementById('setarea'),
                     getarea     = document.getElementById('getarea'),
                     storagename = 'testinglocalstorage',
-                    getvalue    = (simplestorage.get(storagename) || '');
+                    getvalue    = (simplestorage.get(storagename) || ''),
+                    getversion  = (Math.floor(getvalue.version) || 0);
 
 
                 //-- set storage - you input a string you get back a string, you input an object you get back an object
                 setbutton.onclick = function(e)
                 {
                     var val = setarea.value;
+
+                    setarea.value = '';
+
                     try
                     {
                         val = JSON.parse(setarea.value);
                     }catch(e){}
-                    simplestorage.set(storagename, val);
 
-                    setarea.value = '';
-                    setarea.setAttribute('placeholder','Submitted data, hit refresh for you browser.');
+                    if(getversion < 10) //-- added a "version" storage parameter, an alternate way to trigger an update of your stored data
+                    {
+                        simplestorage.set(storagename, val, (getversion + 1));
+                        setarea.setAttribute('placeholder','Submitted data, hit refresh for you browser.');
+                    }
+                    else
+                    {
+                        simplestorage.set(storagename, {}, 0);
+                        setarea.setAttribute('placeholder','Max number of versions reached, starting over hit refresh.');
+                    }
                 }
 
 

@@ -15,11 +15,13 @@ window.simplestorage = (function(window, undefined)
 
 
     //-- store and return data
-    function getsetdata( name, data )
+    function getsetdata( name, data, version )
     {
         var current  = new Date().getTime(),
             original = current,
             tempobj  = {};
+
+        version = (typeof version == 'number')? version : 0.1;
 
         if(localStorage[name])
         {
@@ -28,7 +30,7 @@ window.simplestorage = (function(window, undefined)
 
         if( data != undefined )
         {
-            tempobj = extend(tempobj, { set:( tempobj.set || original ), updated:current, data:data });
+            tempobj = extend(tempobj, { version:version, set:( tempobj.set || original ), updated:current, data:data });
             localStorage[name] = JSON.stringify(tempobj);
         }
 
@@ -60,9 +62,9 @@ window.simplestorage = (function(window, undefined)
             return this.set.call(this,name);
         },
 
-        set : function(name,data)
+        set : function(name,data,version)
         {
-            return (this.store && typeof name == 'string')? getsetdata.call(this,name,data) : null;
+            return (this.store && typeof name == 'string')? getsetdata.call(this,name,data,version) : null;
         }
     };
 

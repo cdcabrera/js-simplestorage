@@ -31,7 +31,12 @@ window.simplestorage = (function(window, undefined)
         if( data != undefined )
         {
             tempobj = extend(tempobj, { version:version, set:( tempobj.set || original ), updated:current, data:data });
-            localStorage[name] = JSON.stringify(tempobj);
+            try //-- for private browsing fail
+            {
+                localStorage[name] = JSON.stringify(tempobj);
+            }
+            catch(e)
+            {}
         }
 
         return tempobj;

@@ -5,7 +5,7 @@
 <!--[if gt IE 9]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
     <head>
         <meta charset="utf-8" />
-        <title>JS.Simple Storage</title>
+        <title>JS.Simple Storage.jQuery</title>
 
         <style>
             /*-- Normalize, http://necolas.github.com/normalize.css/ - - - - - - - - - - - - - - - - - - - --*/
@@ -26,12 +26,11 @@
 
         <div>
 <!-- Begin Body - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-            <h1>JS.Simple Storage</h1>
+            <h1>JS.Simple Storage.jQuery</h1>
 
             <label>
                 <h2>Set your data.</h2>
                 <textarea id="setarea" name="set" placeholder="Type some data... use proper JSON syntax if you want to store an object."></textarea>
-                <input type="button" id="setsubmit" value="Set localStorage" />
             </label>
 
             <label>
@@ -43,56 +42,41 @@
 <!-- End Body - - - - - - - - - - - - - - - - - - - - - - - - - - -->
         </div>
 
-        <script src="simplestorage.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="simplestorage.jquery.js"></script>
         <script>
 
-            (function(window, undefined){
+            (function(window, $, undefined){
 
-                var setbutton   = document.getElementById('setsubmit'),
-                    clearbutton = document.getElementById('clearsubmit'),
-                    setarea     = document.getElementById('setarea'),
-                    getarea     = document.getElementById('getarea'),
+                var clearbutton = $('#clearsubmit'),
+                    setarea     = $('#setarea'),
+                    getarea     = $('#getarea'),
                     storagename = 'testinglocalstorage',
-                    getvalue    = (simplestorage.get(storagename) || ''),
-                    getversion  = (Math.floor(getvalue.version) || 0);
+                    getvalue    = ($.simpleStorage.get(storagename) || '');
 
+                getarea.val( JSON.stringify(getvalue) );
 
                 //-- set storage - you input a string you get back a string, you input an object you get back an object
-                setbutton.onclick = function(e)
+                setarea.on('keydown keyup keypress', function()
                 {
-                    var val = setarea.value;
-
-                    setarea.value = '';
+                    var val = setarea.val();
 
                     try
                     {
-                        val = JSON.parse(setarea.value);
+                        val = JSON.parse(val);
                     }catch(e){}
 
-                    if(getversion < 10) //-- added a "version" storage parameter, an alternate way to trigger an update of your stored data
-                    {
-                        simplestorage.set(storagename, val, (getversion + 1));
-                        setarea.setAttribute('placeholder','Submitted data, hit refresh for you browser.');
-                    }
-                    else
-                    {
-                        simplestorage.set(storagename, val, 0);
-                        setarea.setAttribute('placeholder','Max number of versions reached, starting over hit refresh.');
-                    }
-                }
-
+                    $.simpleStorage.set(storagename, val);
+                });
 
                 //-- clear storage
-                clearbutton.onclick = function(e)
+                clearbutton.on('click', function(e)
                 {
-                    simplestorage.clear(storagename);
-                    getarea.value = '{}';
-                }
+                    $.simpleStorage.clear(storagename);
+                    getarea.val('{}');
+                });
 
-
-                getarea.value = JSON.stringify(getvalue);
-
-            })(this);
+            })(this, jQuery);
 
         </script>
     </body>

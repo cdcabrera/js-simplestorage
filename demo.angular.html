@@ -5,7 +5,7 @@
 <!--[if gt IE 9]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
     <head>
         <meta charset="utf-8" />
-        <title>JS.Simple Storage</title>
+        <title>JS.Simple Storage.Angular</title>
 
         <style>
             /*-- Normalize, http://necolas.github.com/normalize.css/ - - - - - - - - - - - - - - - - - - - --*/
@@ -22,78 +22,65 @@
             h2          {   margin:0 0 15px; }
         </style>
     </head>
-    <body>
+    <body data-ng-app="simpleApp">
 
-        <div>
+        <div data-ng-controller="mainCtrl">
 <!-- Begin Body - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-            <h1>JS.Simple Storage</h1>
+            <h1>JS.Simple Storage.Angular</h1>
 
             <label>
                 <h2>Set your data.</h2>
-                <textarea id="setarea" name="set" placeholder="Type some data... use proper JSON syntax if you want to store an object."></textarea>
-                <input type="button" id="setsubmit" value="Set localStorage" />
+                <textarea name="set" data-ng-model="localstore.set" data-ng-change="updatestore()" placeholder="Type some data... use proper JSON syntax if you want to store an object."></textarea>
             </label>
 
             <label>
                 <h2>View your data on refresh.</h2>
-                <textarea id="getarea" name="get" placeholder="View your data on reload..."></textarea>
-                <input type="button" id="clearsubmit" value="Clear localStorage" />
+                <textarea name="get" data-ng-model="localstore.get" placeholder="View your data on reload..."></textarea>
+                <input type="button" data-ng-click="clearstore()" value="Clear localStorage" />
             </label>
 
 <!-- End Body - - - - - - - - - - - - - - - - - - - - - - - - - - -->
         </div>
 
-        <script src="simplestorage.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular.min.js"></script>
+
         <script>
 
-            (function(window, undefined){
+            (function(window, angular, undefined){
 
-                var setbutton   = document.getElementById('setsubmit'),
-                    clearbutton = document.getElementById('clearsubmit'),
-                    setarea     = document.getElementById('setarea'),
-                    getarea     = document.getElementById('getarea'),
-                    storagename = 'testinglocalstorage',
-                    getvalue    = (simplestorage.get(storagename) || ''),
-                    getversion  = (Math.floor(getvalue.version) || 0);
+                window.simpleApp = angular.module('simpleApp', []);
 
-
-                //-- set storage - you input a string you get back a string, you input an object you get back an object
-                setbutton.onclick = function(e)
+                window.simpleApp.controller('mainCtrl', ['$scope', 'simpleStorage', function($scope, simpleStorage)
                 {
-                    var val = setarea.value;
+                    $scope.localstore = { get: null, set: null, name: 'testinglocalstorage' };
+                    $scope.localstore.get = JSON.stringify( simpleStorage.get($scope.localstore.name) );
 
-                    setarea.value = '';
 
-                    try
+                    $scope.updatestore = function()
                     {
-                        val = JSON.parse(setarea.value);
-                    }catch(e){}
+                        var val = $scope.localstore.set;
 
-                    if(getversion < 10) //-- added a "version" storage parameter, an alternate way to trigger an update of your stored data
+                        try
+                        {
+                            val = JSON.parse(val);
+                        }catch(e){}
+
+                        simpleStorage.set($scope.localstore.name, val);
+                    };
+
+
+                    $scope.clearstore = function()
                     {
-                        simplestorage.set(storagename, val, (getversion + 1));
-                        setarea.setAttribute('placeholder','Submitted data, hit refresh for you browser.');
-                    }
-                    else
-                    {
-                        simplestorage.set(storagename, val, 0);
-                        setarea.setAttribute('placeholder','Max number of versions reached, starting over hit refresh.');
-                    }
-                }
+                        simpleStorage.clear($scope.localstore.name);
+                        $scope.localstore.get = '{}';
+                    };
 
+                }]);
 
-                //-- clear storage
-                clearbutton.onclick = function(e)
-                {
-                    simplestorage.clear(storagename);
-                    getarea.value = '{}';
-                }
-
-
-                getarea.value = JSON.stringify(getvalue);
-
-            })(this);
+            })(this, angular);
 
         </script>
+
+        <script src="simplestorage.angular.js"></script>
     </body>
 </html>

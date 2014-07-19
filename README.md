@@ -1,6 +1,6 @@
 <h1>JS.Simple Storage</h1>
 <p>
-    Simple JS method to get you going with localStorage without an API.
+    Simple JS method to get you going with localStorage without an API. I did go ahead and add jQuery plus AngularJS aspects for my own purposes.
 </p>
 
 <h2>How it works</h2>
